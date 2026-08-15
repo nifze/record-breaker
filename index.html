@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Record Breaker — Invent & Break Silly Records</title>
+  <meta name="description" content="The record-breaking website. Invent silly challenges, beat your own high scores, and claim the local throne. Pure HTML/CSS/JS." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --surface2: #1a1a24;
+      --border: #2a2a3a;
+      --text: #f0f0f5;
+      --muted: #8888a0;
+      --accent: #7c5cff;
+      --accent2: #00e5a0;
+      --danger: #ff5c7c;
+      --warning: #ffc857;
+      --radius: 16px;
+      --font: 'Space Grotesk', system-ui, sans-serif;
+      --mono: 'JetBrains Mono', ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* subtle grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(124, 92, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124, 92, 255, 0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* HEADER */
+    header {
+      padding: 28px 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 1.35rem;
+      letter-spacing: -0.03em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo span {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(124, 92, 255, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(124, 92, 255, 0.3);
+    }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 60px 0 50px;
+    }
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 3.8rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      margin-bottom: 18px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      color: var(--muted);
+      font-size: 1.15rem;
+      max-width: 520px;
+      margin: 0 auto 32px;
+    }
+    .cta-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 24px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+      font-family: inherit;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #9b7aff);
+      color: white;
+      box-shadow: 0 8px 24px rgba(124, 92, 255, 0.35);
+    }
+    .btn-primary:hover {
+      box-shadow: 0 12px 32px rgba(124, 92, 255, 0.45);
+      transform: translateY(-2px);
+    }
+    .btn-ghost {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: var(--surface); }
+
+    /* STATS STRIP */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 48px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      text-align: center;
+    }
+    .stat-card .value {
+      font-family: var(--mono);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--accent2);
+    }
+    .stat-card .label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 4px;
+    }
+
+    /* CHALLENGES */
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .section-sub {
+      color: var(--muted);
+      margin-bottom: 28px;
+      font-size: 0.95rem;
+    }
+    .challenges {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+      margin-bottom: 60px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .card:hover {
+      border-color: rgba(124, 92, 255, 0.4);
+      transform: translateY(-3px);
+    }
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 14px;
+      background: rgba(124, 92, 255, 0.12);
+    }
+    .card h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .card p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      flex: 1;
+      margin-bottom: 16px;
+    }
+    .high-score {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--accent2);
+      margin-bottom: 14px;
+    }
+    .card .btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    /* MODAL / CHALLENGE OVERLAY */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .overlay.active { display: flex; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 420px;
+      padding: 28px;
+      position: relative;
+      animation: pop 0.25s ease;
+    }
+    @keyframes pop {
+      from { opacity: 0; transform: scale(0.92) translateY(12px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal h2 {
+      font-size: 1.35rem;
+      margin-bottom: 6px;
+    }
+    .modal .desc {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 22px;
+    }
+    .close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: var(--surface2);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .close-btn:hover { color: var(--text); }
+
+    /* Clicker challenge */
+    .click-zone {
+      height: 180px;
+      border-radius: 14px;
+      background: var(--surface2);
+      border: 2px dashed var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      margin-bottom: 16px;
+      transition: background 0.1s, border-color 0.1s;
+    }
+    .click-zone:active, .click-zone.active {
+      background: rgba(124, 92, 255, 0.15);
+      border-color: var(--accent);
+    }
+    .click-count {
+      font-family: var(--mono);
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--accent2);
+    }
+    .timer {
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* Reaction */
+    .reaction-box {
+      height: 180px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      margin-bottom: 16px;
+      transition: background 0.15s;
+    }
+    .reaction-box.wait { background: var(--surface2); color: var(--muted); }
+    .reaction-box.ready { background: var(--accent2); color: #0a0a0f; }
+    .reaction-box.too-soon { background: var(--danger); color: white; }
+    .reaction-box.result { background: var(--surface2); color: var(--text); }
+
+    /* Memory */
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .memory-cell {
+      aspect-ratio: 1;
+      border-radius: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .memory-cell.lit {
+      background: var(--accent);
+      transform: scale(0.95);
+    }
+    .memory-cell.correct {
+      background: var(--accent2);
+    }
+    .memory-cell.wrong {
+      background: var(--danger);
+    }
+
+    .result-msg {
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 1.1rem;
+      margin: 12px 0;
+      min-height: 1.5em;
+    }
+    .result-msg.good { color: var(--accent2); }
+    .result-msg.bad { color: var(--danger); }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 40px 0 50px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    footer a:hover { text-decoration: underline; }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 22px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      z-index: 200;
+      opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <span>Record Breaker</span>
+        <span class="badge">v1.0</span>
+      </div>
+      <a href="https://github.com/nifze/record-breaker" target="_blank" rel="noopener" class="btn btn-ghost" style="padding: 8px 16px; font-size: 0.85rem;">
+        GitHub ↗
+      </a>
+    </header>
+
+    <section class="hero">
+      <h1>The <em>record-breaking</em><br>website.</h1>
+      <p>Invent silly challenges. Beat your own high scores. Claim the (local) throne. No accounts, no backend — just pure browser glory.</p>
+      <div class="cta-row">
+        <button class="btn btn-primary" onclick="document.getElementById('challenges').scrollIntoView({behavior:'smooth'})">
+          Start Breaking Records
+        </button>
+        <button class="btn btn-ghost" onclick="resetAllScores()">
+          Reset All Scores
+        </button>
+      </div>
+    </section>
+
+    <div class="stats" id="stats">
+      <div class="stat-card">
+        <div class="value" id="stat-sessions">0</div>
+        <div class="label">Sessions</div>
+      </div>
+      <div class="stat-card">
+        <div class="value" id="stat-records">0</div>
+        <div class="label">Records Set</div>
+      </div>
+      <div class="stat-card">
+        <div class="value" id="stat-clicks">0</div>
+        <div class="label">Total Clicks</div>
+      </div>
+      <div class="stat-card">
+        <div class="value" id="stat-best-reaction">—</div>
+        <div class="label">Best Reaction</div>
+      </div>
+    </div>
+
+    <h2 class="section-title" id="challenges">Challenges</h2>
+    <p class="section-sub">Pick one. Break it. Come back tomorrow and break it again.</p>
+
+    <div class="challenges">
+      <article class="card">
+        <div class="card-icon">👆</div>
+        <h3>Click Storm</h3>
+        <p>How many times can you click in 5 seconds? Pure finger speed.</p>
+        <div class="high-score">Best: <span id="hs-click">0</span> clicks</div>
+        <button class="btn btn-primary" onclick="openChallenge('click')">Play</button>
+      </article>
+
+      <article class="card">
+        <div class="card-icon">⚡</div>
+        <h3>Reaction Time</h3>
+        <p>Wait for green, then click as fast as humanly possible.</p>
+        <div class="high-score">Best: <span id="hs-reaction">—</span> ms</div>
+        <button class="btn btn-primary" onclick="openChallenge('reaction')">Play</button>
+      </article>
+
+      <article class="card">
+        <div class="card-icon">🧠</div>
+        <h3>Memory Sequence</h3>
+        <p>Watch the lights. Repeat the sequence. How far can you go?</p>
+        <div class="high-score">Best level: <span id="hs-memory">0</span></div>
+        <button class="btn btn-primary" onclick="openChallenge('memory')">Play</button>
+      </article>
+    </div>
+  </div>
+
+  <footer>
+    <p>Built as a record-breaking experiment · <a href="https://github.com/nifze/record-breaker">Source on GitHub</a></p>
+    <p style="margin-top: 8px; opacity: 0.6;">Scores live only in your browser (localStorage). No tracking.</p>
+  </footer>
+
+  <!-- OVERLAY -->
+  <div class="overlay" id="overlay">
+    <div class="modal" id="modal">
+      <button class="close-btn" onclick="closeChallenge()" aria-label="Close">×</button>
+      <h2 id="modal-title">Challenge</h2>
+      <p class="desc" id="modal-desc"></p>
+      <div id="modal-body"></div>
+      <div class="result-msg" id="result-msg"></div>
+      <button class="btn btn-primary" id="modal-action" style="width:100%; margin-top: 8px;">Start</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ─── Storage helpers ───
+    const KEYS = {
+      click: 'rb_click',
+      reaction: 'rb_reaction',
+      memory: 'rb_memory',
+      sessions: 'rb_sessions',
+      records: 'rb_records',
+      totalClicks: 'rb_total_clicks'
+    };
+
+    function get(key, fallback = 0) {
+      const v = localStorage.getItem(key);
+      return v !== null ? Number(v) : fallback;
+    }
+    function set(key, val) {
+      localStorage.setItem(key, String(val));
+    }
+
+    function updateUI() {
+      document.getElementById('hs-click').textContent = get(KEYS.click);
+      const r = get(KEYS.reaction, null);
+      document.getElementById('hs-reaction').textContent = r ? r + ' ms' : '—';
+      document.getElementById('hs-memory').textContent = get(KEYS.memory);
+      document.getElementById('stat-sessions').textContent = get(KEYS.sessions);
+      document.getElementById('stat-records').textContent = get(KEYS.records);
+      document.getElementById('stat-clicks').textContent = get(KEYS.totalClicks);
+      document.getElementById('stat-best-reaction').textContent = r ? r + 'ms' : '—';
+    }
+
+    function recordNewHigh() {
+      set(KEYS.records, get(KEYS.records) + 1);
+      updateUI();
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+    }
+
+    function resetAllScores() {
+      if (!confirm('Reset all high scores and stats?')) return;
+      Object.values(KEYS).forEach(k => localStorage.removeItem(k));
+      updateUI();
+      showToast('All scores wiped. Fresh start.');
+    }
+
+    // ─── Challenge state ───
+    let current = null;
+    let clickState = { count: 0, running: false, timer: null };
+    let reactionState = { start: 0, timeout: null, phase: 'idle' };
+    let memoryState = { sequence: [], player: [], level: 0, playing: false };
+
+    function openChallenge(type) {
+      current = type;
+      const overlay = document.getElementById('overlay');
+      const title = document.getElementById('modal-title');
+      const desc = document.getElementById('modal-desc');
+      const body = document.getElementById('modal-body');
+      const action = document.getElementById('modal-action');
+      const result = document.getElementById('result-msg');
+      result.textContent = '';
+      result.className = 'result-msg';
+
+      if (type === 'click') {
+        title.textContent = 'Click Storm';
+        desc.textContent = 'Click as many times as you can in 5 seconds. Ready?';
+        body.innerHTML = `
+          <div class="click-zone" id="click-zone">
+            <div class="click-count" id="click-count">0</div>
+            <div class="timer" id="click-timer">5.0s</div>
+          </div>`;
+        action.textContent = 'Start 5s Timer';
+        action.onclick = startClickChallenge;
+        document.getElementById('click-zone').onclick = handleClick;
+      } else if (type === 'reaction') {
+        title.textContent = 'Reaction Time';
+        desc.textContent = 'Wait for the box to turn green, then click instantly.';
+        body.innerHTML = `<div class="reaction-box wait" id="reaction-box">Click to start</div>`;
+        action.textContent = 'Start';
+        action.onclick = startReaction;
+        document.getElementById('reaction-box').onclick = handleReactionClick;
+      } else if (type === 'memory') {
+        title.textContent = 'Memory Sequence';
+        desc.textContent = 'Watch the sequence, then repeat it by clicking the cells.';
+        body.innerHTML = `<div class="memory-grid" id="memory-grid"></div>`;
+        buildMemoryGrid();
+        action.textContent = 'Start Level 1';
+        action.onclick = startMemory;
+      }
+
+      overlay.classList.add('active');
+      set(KEYS.sessions, get(KEYS.sessions) + 1);
+      updateUI();
+    }
+
+    function closeChallenge() {
+      document.getElementById('overlay').classList.remove('active');
+      clearInterval(clickState.timer);
+      clearTimeout(reactionState.timeout);
+      current = null;
+    }
+
+    // ─── Click Storm ───
+    function startClickChallenge() {
+      if (clickState.running) return;
+      clickState = { count: 0, running: true, timer: null };
+      document.getElementById('click-count').textContent = '0';
+      let left = 5.0;
+      document.getElementById('click-timer').textContent = '5.0s';
+      document.getElementById('modal-action').textContent = 'Go!';
+      document.getElementById('result-msg').textContent = '';
+
+      clickState.timer = setInterval(() => {
+        left -= 0.1;
+        if (left <= 0) {
+          clearInterval(clickState.timer);
+          clickState.running = false;
+          document.getElementById('click-timer').textContent = '0.0s';
+          finishClick();
+        } else {
+          document.getElementById('click-timer').textContent = left.toFixed(1) + 's';
+        }
+      }, 100);
+    }
+
+    function handleClick() {
+      if (!clickState.running) return;
+      clickState.count++;
+      document.getElementById('click-count').textContent = clickState.count;
+      set(KEYS.totalClicks, get(KEYS.totalClicks) + 1);
+      updateUI();
+    }
+
+    function finishClick() {
+      const score = clickState.count;
+      const best = get(KEYS.click);
+      const result = document.getElementById('result-msg');
+      if (score > best) {
+        set(KEYS.click, score);
+        recordNewHigh();
+        result.textContent = `New record! ${score} clicks`;
+        result.className = 'result-msg good';
+        showToast('New Click Storm record!');
+      } else {
+        result.textContent = `${score} clicks (best: ${best})`;
+        result.className = 'result-msg';
+      }
+      document.getElementById('modal-action').textContent = 'Try Again';
+      document.getElementById('modal-action').onclick = startClickChallenge;
+      updateUI();
+    }
+
+    // ─── Reaction ───
+    function startReaction() {
+      const box = document.getElementById('reaction-box');
+      clearTimeout(reactionState.timeout);
+      reactionState.phase = 'wait';
+      box.className = 'reaction-box wait';
+      box.textContent = 'Wait for green…';
+      document.getElementById('result-msg').textContent = '';
+      document.getElementById('modal-action').textContent = 'Waiting…';
+
+      const delay = 1500 + Math.random() * 3000;
+      reactionState.timeout = setTimeout(() => {
+        reactionState.phase = 'ready';
+        reactionState.start = performance.now();
+        box.className = 'reaction-box ready';
+        box.textContent = 'CLICK!';
+      }, delay);
+    }
+
+    function handleReactionClick() {
+      const box = document.getElementById('reaction-box');
+      if (reactionState.phase === 'idle') {
+        startReaction();
+        return;
+      }
+      if (reactionState.phase === 'wait') {
+        clearTimeout(reactionState.timeout);
+        reactionState.phase = 'idle';
+        box.className = 'reaction-box too-soon';
+        box.textContent = 'Too soon!';
+        document.getElementById('result-msg').textContent = 'Wait for green next time.';
+        document.getElementById('result-msg').className = 'result-msg bad';
+        document.getElementById('modal-action').textContent = 'Try Again';
+        return;
+      }
+      if (reactionState.phase === 'ready') {
+        const ms = Math.round(performance.now() - reactionState.start);
+        reactionState.phase = 'idle';
+        box.className = 'reaction-box result';
+        box.textContent = ms + ' ms';
+
+        const best = get(KEYS.reaction, null);
+        const result = document.getElementById('result-msg');
+        if (best === null || ms < best) {
+          set(KEYS.reaction, ms);
+          recordNewHigh();
+          result.textContent = 'New personal best!';
+          result.className = 'result-msg good';
+          showToast('New reaction record!');
+        } else {
+          result.textContent = `Best remains ${best} ms`;
+          result.className = 'result-msg';
+        }
+        document.getElementById('modal-action').textContent = 'Try Again';
+        updateUI();
+      }
+    }
+
+    // ─── Memory ───
+    function buildMemoryGrid() {
+      const grid = document.getElementById('memory-grid');
+      grid.innerHTML = '';
+      for (let i = 0; i < 16; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'memory-cell';
+        cell.dataset.idx = i;
+        cell.onclick = () => memoryClick(i);
+        grid.appendChild(cell);
+      }
+    }
+
+    function startMemory() {
+      memoryState = { sequence: [], player: [], level: 0, playing: false };
+      document.getElementById('result-msg').textContent = '';
+      nextMemoryLevel();
+    }
+
+    function nextMemoryLevel() {
+      memoryState.level++;
+      memoryState.player = [];
+      memoryState.sequence.push(Math.floor(Math.random() * 16));
+      memoryState.playing = false;
+      document.getElementById('modal-action').textContent = `Level ${memoryState.level} — Watch`;
+      playSequence();
+    }
+
+    function playSequence() {
+      const cells = document.querySelectorAll('.memory-cell');
+      let i = 0;
+      const interval = setInterval(() => {
+        if (i > 0) cells[memoryState.sequence[i - 1]].classList.remove('lit');
+        if (i >= memoryState.sequence.length) {
+          clearInterval(interval);
+          memoryState.playing = true;
+          document.getElementById('modal-action').textContent = 'Your turn';
+          return;
+        }
+        cells[memoryState.sequence[i]].classList.add('lit');
+        i++;
+      }, 600);
+    }
+
+    function memoryClick(idx) {
+      if (!memoryState.playing) return;
+      const cells = document.querySelectorAll('.memory-cell');
+      const expected = memoryState.sequence[memoryState.player.length];
+      memoryState.player.push(idx);
+
+      if (idx === expected) {
+        cells[idx].classList.add('correct');
+        setTimeout(() => cells[idx].classList.remove('correct'), 250);
+        if (memoryState.player.length === memoryState.sequence.length) {
+          // level complete
+          const best = get(KEYS.memory);
+          if (memoryState.level > best) {
+            set(KEYS.memory, memoryState.level);
+            recordNewHigh();
+            showToast(`New memory record: Level ${memoryState.level}`);
+          }
+          updateUI();
+          setTimeout(nextMemoryLevel, 500);
+        }
+      } else {
+        cells[idx].classList.add('wrong');
+        memoryState.playing = false;
+        const result = document.getElementById('result-msg');
+        result.textContent = `Game over at level ${memoryState.level}`;
+        result.className = 'result-msg bad';
+        document.getElementById('modal-action').textContent = 'Try Again';
+        document.getElementById('modal-action').onclick = startMemory;
+        setTimeout(() => cells[idx].classList.remove('wrong'), 400);
+      }
+    }
+
+    // init
+    updateUI();
+  </script>
+</body>
+</html>
