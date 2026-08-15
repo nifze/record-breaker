@@ -4,7 +4,7 @@
 
 Invent silly challenges. Beat your own high scores. Claim the (local) throne.
 
-**Live site:** once GitHub Pages is enabled → https://nifze.github.io/record-breaker/
+**Live site:** [https://nifze.github.io/record-breaker/](https://nifze.github.io/record-breaker/)
 
 ## Features
 
@@ -15,13 +15,13 @@ Invent silly challenges. Beat your own high scores. Claim the (local) throne.
 - Dark, modern UI with smooth interactions
 - Pure HTML + CSS + vanilla JS (no frameworks)
 
-## Enable GitHub Pages
+## GitHub Pages
 
-1. Go to the repo **Settings → Pages**
-2. Under **Source**, choose **Deploy from a branch**
-3. Select branch `main` and folder `/ (root)`
-4. Save — your site will be live at  
-   `https://nifze.github.io/record-breaker/`
+Already enabled and live at:
+
+**https://nifze.github.io/record-breaker/**
+
+If it ever stops working, re-enable it in **Settings → Pages** → Source: Deploy from a branch → `main` / `/ (root)`.
 
 ## Local preview
 
